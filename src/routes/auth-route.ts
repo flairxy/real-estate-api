@@ -34,8 +34,8 @@ const passwordValidor = [
   body('oldPassword').trim().notEmpty().withMessage('Old password is required'),
 ];
 
-router.get('/hello', (req, res) => {
-  res.send('Welcome');
+router.get('/', (req, res) => {
+  res.send('API Running...');
 });
 router.get('/current-user', auth, authUser);
 router.post('/register', registerValidator, validateRequest, register);

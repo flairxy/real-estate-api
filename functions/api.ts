@@ -25,7 +25,7 @@ import { adminAppointmentRouter } from '../src/routes/admin/appointment-route';
 
 dotenv.config();
 const app = express();
-// app.use(morganMiddleware);
+app.use(morganMiddleware);
 app.use(json({ limit: '30mb' }));
 app.use(cors());
 
