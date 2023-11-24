@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 
 
 
+
 import { errorHandler } from '../src/middlewares/error-handler';
 import { NotFoundError } from '../src/errors/not-found-error';
 import { morganMiddleware } from '../src/middlewares/morgan';
@@ -24,7 +25,7 @@ import { adminAppointmentRouter } from '../src/routes/admin/appointment-route';
 
 dotenv.config();
 const app = express();
-app.use(morganMiddleware);
+// app.use(morganMiddleware);
 app.use(json({ limit: '30mb' }));
 app.use(cors());
 
