@@ -1,0 +1,158 @@
+import { v2 as cloudinary } from 'cloudinary';
+import { BadRequestError } from '../errors/bad-request-error';
+import { randomBytes } from 'crypto';
+import axios from 'axios';
+import hbs from 'nodemailer-express-handlebars';
+import nodemailer from 'nodemailer';
+import path from 'path';
+
+const SECURE = 'production';
+const ROOT = 'dynasty';
+
+interface User {
+  email: string;
+  firstname: string;
+}
+
+export const config = () => {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET,
+    secure: process.env.NODE_ENV === SECURE,
+  });
+};
+
+export class ImageService {
+  static imageUpload = async (file: string, folder: string, type: string) => {
+    config();
+    try {
+      const name = randomBytes(10).toString('hex');
+      const result = await cloudinary.uploader.upload(file, {
+        public_id: `${ROOT}/${type}/${folder}/${name}`,
+      });
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestError('Image upload failed');
+    }
+  };
+  static deleteUploads = async (
+    files: string[],
+    folderName: string,
+    type: string
+  ) => {
+    try {
+      config();
+      await cloudinary.api.delete_resources(files, {
+        type: 'upload',
+        resource_type: 'image',
+      });
+      const path = `${ROOT}/${type}/${folderName}`;
+      await cloudinary.api.delete_folder(path);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestError('Failed to delete resources');
+    }
+  };
+}
+
+export class PaystackService {
+  static verifyTransaction = async (reference: string) => {
+    const url = `https://api.paystack.co/transaction/verify/${reference}`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET}`,
+      },
+    });
+    return response.data;
+  };
+
+  static initialize = async (email: string, amount: string) => {
+    const params = JSON.stringify({
+      email,
+      amount: `${amount}00`,
+    });
+
+    const url = 'https://api.paystack.co/transaction/initialize';
+    const response = await axios.post(url, params, {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  };
+}
+
+export class EmailService {
+  static config = () => {
+    let transport = nodemailer.createTransport({
+      host: 'sandbox.smtp.mailtrap.io',
+      port: 2525,
+      auth: {
+        user: 'cc8729d47376ab',
+        pass: 'b54e4b98565a2a',
+      },
+    });
+
+    transport.use(
+      'compile',
+      hbs({
+        viewEngine: {
+          partialsDir: path.resolve('./views/'),
+          defaultLayout: false,
+        },
+        viewPath: path.resolve('./views/'),
+      })
+    );
+    return transport;
+  };
+  static verifyEmail = async (user: User, token: string) => {
+    const transporter = this.config();
+    if (user.email) {
+      const mailOptions = {
+        from: process.env.MAIL_FROM, // sender address
+        template: 'verify-email', // the name of the template file, i.e., verify-email.handlebars
+        to: user.email,
+        subject: 'Email Verification',
+        attachments: [
+          { filename: 'email.png', path: './attachments/email.png', cid: 'imagename' },
+        ],
+        context: {
+          token: `${process.env.SITE_URL}/api/verify-email/token/${token}`,
+        },
+      };
+      try {
+        await transporter.sendMail(mailOptions);
+        return true;
+      } catch (error: any) {
+        throw new Error(error.message)
+      }
+    }
+  };
+  static resetToken = async (user: User, token: string) => {
+    const transporter = this.config();
+    if (user.email) {
+      const mailOptions = {
+        from: process.env.MAIL_FROM, // sender address
+        template: 'password-reset', // the name of the template file, i.e., verify-email.handlebars
+        to: user.email,
+        subject: 'Password Reset',
+        attachments: [
+          { filename: 'email.png', path: './attachments/email.png', cid: 'imagename' },
+        ],
+        context: {
+          token: `${process.env.SITE_URL}/api/reset-password/token/${token}`,
+        },
+      };
+      try {
+        await transporter.sendMail(mailOptions);
+        return true;
+      } catch (error: any) {
+        throw new Error(error.message)
+      }
+    }
+  };
+
+}
