@@ -1,2 +1,12 @@
 [build]
+external_node_modules = [
+    "express",
+    "express-async-errors",
+    "cors",
+    "dotenv",
+    "serverless-http",
+    "body-parser",
+    "mongoose",
+]
+node_bundler = "esbuild"
 functions = "functions"
