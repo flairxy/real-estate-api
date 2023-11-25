@@ -61,16 +61,10 @@ if (!process.env.MONGO_URI) {
   throw new Error('MONGO_URI must be defined');
 }
 
-const dbExecute = (db: any, fn: any) => db.then(fn).finally(() => db.close());
-
-function dbConnectAndExecute(fn: any) {
-  return dbExecute(mongoose.connect(process.env.MONGO_URI!), fn);
-}
-
 const handler = serverless(app);
 module.exports.handler = async (event: any, context: any) => {
-  //close connection after request
-  dbConnectAndExecute(async () => {
-    return await handler(event, context);
-  });
+  const client = await mongoose.connect(process.env.MONGO_URI!)
+  const result = await handler(event, context);
+  await client.disconnect();
+  return result;
 };
