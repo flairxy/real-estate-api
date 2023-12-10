@@ -10,8 +10,10 @@ import { Roles, TransactionStatus } from '../../../utils/constants';
 
 const createListing = async () => {
   const listingDetails: ListingProperties = {
+    title: 'Title',
     description: 'Description',
     type: 1,
+    category: 1,
     location: 'Abuja',
     price: 500,
   };

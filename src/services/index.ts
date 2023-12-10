@@ -55,6 +55,20 @@ export class ImageService {
       throw new BadRequestError('Failed to delete resources');
     }
   };
+  static deleteImage = async (
+    file: string
+  ) => {
+    try {
+      config();
+      await cloudinary.api.delete_resources([file], {
+        type: 'upload',
+        resource_type: 'image',
+      });
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestError('Failed to delete resource');
+    }
+  };
 }
 
 export class PaystackService {

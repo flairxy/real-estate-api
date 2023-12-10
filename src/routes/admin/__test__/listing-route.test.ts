@@ -3,8 +3,10 @@ import { app } from '../../../app';
 import { Listing, Properties } from '../../../models/listing';
 
 const listingDetails: Properties = {
+  title: 'Title',
   description: 'Description',
   type: 1,
+  category: 1,
   location: 'Abuja',
   price: 500,
 };

@@ -68,9 +68,12 @@ export const login = async (req: Request, res: Response) => {
       phone: existingUser.phone,
       firstname: existingUser.firstname,
       lastname: existingUser.lastname,
+      type: existingUser.role,
+      is_verified: existingUser.is_verified,
     },
     process.env.JWT_KEY! //the ! afer process.env.JWT_KEY is to stop typescript warning
   );
+  console.log(existingUser.role);
   // req.session = { token: userJwt };
   res.status(200).send({ data: existingUser, token });
 };
@@ -142,6 +145,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
       phone: user.phone,
       firstname: user.firstname,
       lastname: user.lastname,
+      type: user.role,
+      is_verified: user.is_verified,
     },
     process.env.JWT_KEY!
   );

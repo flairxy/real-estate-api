@@ -1,12 +1,37 @@
 import mongoose from 'mongoose';
 
+export interface Accessories {
+  interior: string[];
+  other: string[];
+  outdoor: string[];
+  utilities: string[];
+}
+
+export interface Coodinate {
+  lat: number;
+  lng: number;
+}
+
+export interface Landmark {
+  type: number;
+  distance: string;
+}
+
 export interface Properties {
+  title: string;
   description: string;
   images?: mongoose.Schema.Types.ObjectId[];
   type: number;
-  location: string;
+  category: string;
+  code: string;
+  address: string;
+  country: string;
+  state: string;
   price: number;
-  available?: boolean;
+  landmarks?: mongoose.Schema.Types.Mixed[];
+  accessories?: Accessories;
+  coordinate?: Coodinate;
+  status?: number;
   featured?: boolean;
 }
 
@@ -17,12 +42,20 @@ interface ListingModel extends mongoose.Model<ListingDoc> {
 
 //An interface that describes the properties that a user document has
 interface ListingDoc extends mongoose.Document {
+  title: string;
   description: string;
   images: mongoose.Schema.Types.ObjectId[];
   type: number;
-  location: string;
+  category: string;
+  address: string;
+  country: string;
+  state: string;
+  code: string;
   price: number;
-  available: boolean;
+  landmarks: mongoose.Schema.Types.Mixed[];
+  accessories: Accessories;
+  coordinate: Coodinate;
+  status: number;
   featured: boolean;
   created_at: Date;
   updated_at: Date;
@@ -30,6 +63,10 @@ interface ListingDoc extends mongoose.Document {
 
 const listingSchema = new mongoose.Schema<ListingDoc>(
   {
+    title: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -47,21 +84,43 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
       type: Number,
       required: true,
     },
+    code: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    category: {
+      type: String,
+      required: true,
+    },
+    accessories: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    coordinate: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    landmarks: {
+      type: [mongoose.Schema.Types.Mixed],
+    },
     price: {
       type: Number,
       required: true,
     },
-    location: {
+    address: {
       type: String,
       required: true,
     },
-    available: {
-      type: Boolean,
-      default: true,
+    status: {
+      type: Number,
+      default: 0,
     },
     featured: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     created_at: {
       type: Date,

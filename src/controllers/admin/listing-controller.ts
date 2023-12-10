@@ -20,24 +20,77 @@ export const find = async (req: Request, res: Response) => {
 };
 
 export const create = async (req: Request, res: Response) => {
-  const { description, type, location, price, available, featured } = req.body;
-  const listing = Listing.generate({
+  const {
     description,
     type,
-    location,
+    address,
+    country,
+    state,
     price,
-    available,
+    status,
     featured,
+    title,
+    category,
+    landmarks,
+    accessories,
+    coordinate,
+    code
+  } = req.body;
+  const listing = Listing.generate({
+    title,
+    description,
+    type,
+    category,
+    address,
+    country,
+    state,
+    price,
+    status,
+    featured,
+    landmarks,
+    accessories,
+    coordinate,
+    code
   });
   await listing.save();
   res.status(201).send(listing);
 };
 export const update = async (req: Request, res: Response) => {
-  const { description, type, location, price, available, featured } = req.body;
+  const {
+    title,
+    description,
+    type,
+    category,
+    address,
+    country,
+    state,
+    price,
+    status,
+    featured,
+    landmarks,
+    accessories,
+    coordinate,
+    code
+  } = req.body;
   const { id } = req.params;
   const listing = await Listing.findOneAndUpdate(
     { _id: id },
-    { description, type, location, price, available, featured },
+    {
+      title,
+      description,
+      type,
+      category,
+      address,
+      country,
+      state,
+      price,
+      status,
+      featured,
+      landmarks,
+      accessories,
+      coordinate,
+      code
+    },
     {
       new: true,
     }
@@ -99,7 +152,17 @@ export const uploadImage = async (req: Request, res: Response) => {
   });
   await upload.save();
 
-  listing.images = [...listing.images, ...upload._id];
+  listing.images = [...listing.images, upload._id];
   listing.save();
   res.status(201).send(listing);
+};
+
+export const deleteImage = async (req: Request, res: Response) => {
+  const { id, public_id } = req.body;
+  const upload = await Upload.findById(id);
+  if (upload) {
+    await ImageService.deleteImage(public_id);
+    await Upload.deleteOne({ _id: upload._id });
+  }
+  res.status(201).send({});
 };

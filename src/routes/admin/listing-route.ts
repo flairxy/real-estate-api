@@ -8,6 +8,7 @@ import {
   deleteListing,
   filter,
   uploadImage,
+  deleteImage
 } from '../../controllers/admin/listing-controller';
 import { validateRequest } from '../../middlewares/validate-request';
 import { admin } from '../../middlewares/admin';
@@ -16,9 +17,14 @@ import { auth } from '../../middlewares/authenticated';
 
 const router = express.Router();
 const createValidator = [
+  body('title').notEmpty().withMessage('Title is required'),
+  body('address').notEmpty().withMessage('Address is required'),
+  body('country').notEmpty().withMessage('Country is required'),
+  body('state').notEmpty().withMessage('State is required'),
   body('description').notEmpty().withMessage('Description is required'),
+  body('category').notEmpty().withMessage('Category is required'),
   body('type').isInt().notEmpty().withMessage('List type is required'),
-  body('location').notEmpty().withMessage('Location is required'),
+  body('status').isInt().notEmpty().withMessage('Status type is required'),
   body('price').isInt().notEmpty().withMessage('Price is required'),
 ];
 
@@ -50,5 +56,6 @@ router.post(
   update
 );
 router.post('/admin/listing/delete/:id', auth, admin, deleteListing);
+router.post('/admin/listing/image/delete', auth, admin, deleteImage);
 
 export { router as adminListRouter };

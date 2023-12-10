@@ -2,8 +2,11 @@
   "name": "real-estate-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
+    "start": "ts-node-dev --poll src/index.ts",
+    "lint": "eslint . --ext .ts",
+    "build": "tsc",
     "test": "jest --watchAll --no-cache"
   },
   "jest": {
