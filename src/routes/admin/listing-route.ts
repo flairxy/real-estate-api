@@ -8,7 +8,8 @@ import {
   deleteListing,
   filter,
   uploadImage,
-  deleteImage
+  deleteImage,
+  updateFeaturedStatus,
 } from '../../controllers/admin/listing-controller';
 import { validateRequest } from '../../middlewares/validate-request';
 import { admin } from '../../middlewares/admin';
@@ -57,5 +58,6 @@ router.post(
 );
 router.post('/admin/listing/delete/:id', auth, admin, deleteListing);
 router.post('/admin/listing/image/delete', auth, admin, deleteImage);
+router.post('/admin/listing/featured/:id', auth, admin, updateFeaturedStatus);
 
 export { router as adminListRouter };

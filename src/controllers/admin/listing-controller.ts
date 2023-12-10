@@ -34,7 +34,7 @@ export const create = async (req: Request, res: Response) => {
     landmarks,
     accessories,
     coordinate,
-    code
+    code,
   } = req.body;
   const listing = Listing.generate({
     title,
@@ -50,11 +50,20 @@ export const create = async (req: Request, res: Response) => {
     landmarks,
     accessories,
     coordinate,
-    code
+    code,
   });
   await listing.save();
   res.status(201).send(listing);
 };
+export const updateFeaturedStatus = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const listing = await Listing.findById(id);
+  if(!listing) throw new NotFoundError();
+  listing.featured = !listing.featured;
+  await listing.save();
+  res.status(201).send(listing);
+};
+
 export const update = async (req: Request, res: Response) => {
   const {
     title,
@@ -70,7 +79,7 @@ export const update = async (req: Request, res: Response) => {
     landmarks,
     accessories,
     coordinate,
-    code
+    code,
   } = req.body;
   const { id } = req.params;
   const listing = await Listing.findOneAndUpdate(
@@ -89,7 +98,7 @@ export const update = async (req: Request, res: Response) => {
       landmarks,
       accessories,
       coordinate,
-      code
+      code,
     },
     {
       new: true,
