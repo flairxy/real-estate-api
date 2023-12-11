@@ -5,10 +5,16 @@ export enum Roles {
 
 export enum TransactionStatus {
   PENDING,
-  COMPLETED
+  COMPLETED,
 }
 
 export enum AppontmentStatus {
   PENDING,
-  COMPLETED
+  COMPLETED,
+}
+
+export enum ListingStatus {
+  PENDING,
+  ACTIVE,
+  SOLD,
 }

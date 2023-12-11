@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { ListingStatus } from '../utils/constants';
 
 export interface Accessories {
   interior: string[];
@@ -31,7 +32,7 @@ export interface Properties {
   landmarks?: mongoose.Schema.Types.Mixed[];
   accessories?: Accessories;
   coordinate?: Coodinate;
-  status?: number;
+  status?: ListingStatus;
   featured?: boolean;
 }
 
@@ -55,7 +56,7 @@ interface ListingDoc extends mongoose.Document {
   landmarks: mongoose.Schema.Types.Mixed[];
   accessories: Accessories;
   coordinate: Coodinate;
-  status: number;
+  status: ListingStatus;
   featured: boolean;
   created_at: Date;
   updated_at: Date;
@@ -116,7 +117,7 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
     },
     status: {
       type: Number,
-      default: 0,
+      default: ListingStatus.PENDING,
     },
     featured: {
       type: Boolean,

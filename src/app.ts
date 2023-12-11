@@ -14,6 +14,7 @@ import { morganMiddleware } from './middlewares/morgan';
 import { authRouter } from './routes/auth-route';
 import { userTransactionRouter } from './routes/user/transaction-route';
 import { userAppointmentRouter } from './routes/user/appointment-route';
+import { homeRouter } from './routes/user/listing-route';
 
 import { adminUserRouter } from './routes/admin/user-route';
 import { adminListRouter } from './routes/admin/listing-route';
@@ -40,6 +41,7 @@ app.use('/api', adminListRouter);
 app.use('/api', adminUserRouter);
 app.use('/api', adminAppointmentRouter);
 app.use('/api', adminTransactionRouter);
+app.use('/api', homeRouter);
 
 app.all('*', async () => {
   throw new NotFoundError('Route not found');
