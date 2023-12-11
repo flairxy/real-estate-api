@@ -19,6 +19,7 @@ import { adminUserRouter } from '../src/routes/admin/user-route';
 import { adminListRouter } from '../src/routes/admin/listing-route';
 import { adminTransactionRouter } from '../src/routes/admin/transaction-route';
 import { adminAppointmentRouter } from '../src/routes/admin/appointment-route';
+import { homeRouter } from '../src/routes/user/listing-route';
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.use('/.netlify/functions/api', adminListRouter);
 app.use('/.netlify/functions/api', adminUserRouter);
 app.use('/.netlify/functions/api', adminAppointmentRouter);
 app.use('/.netlify/functions/api', adminTransactionRouter);
+app.use('/.netlify/functions/api', homeRouter);
 
 app.all('*', async () => {
   throw new NotFoundError('Route not found');
