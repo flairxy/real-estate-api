@@ -1,5 +1,5 @@
 import express from 'express';
-import { getFeaturedListing, getListing } from '../../controllers/Home-controller';
+import { getFeaturedListing, getListing } from '../../controllers/home-controller';
 
 const router = express.Router();
 
