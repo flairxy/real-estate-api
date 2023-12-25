@@ -4,6 +4,7 @@ interface Properties {
   url: string;
   asset_id: string;
   public_id: string;
+  resource_type: string;
 }
 
 interface UploadModel extends mongoose.Model<UploadDoc> {
@@ -15,6 +16,7 @@ interface UploadDoc extends mongoose.Document {
   url: string;
   asset_id: string;
   public_id: string;
+  resource_type: string;
 }
 
 const uploadSchema = new mongoose.Schema(
@@ -28,6 +30,10 @@ const uploadSchema = new mongoose.Schema(
       required: true,
     },
     public_id: {
+      type: String,
+      required: true,
+    },
+    resource_type: {
       type: String,
       required: true,
     },

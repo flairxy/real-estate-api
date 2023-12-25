@@ -26,6 +26,7 @@ export interface UserDoc extends mongoose.Document {
   password: string;
   role: Roles;
   is_verified: boolean;
+  isDeleted: boolean;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -55,11 +56,15 @@ const userSchema = new mongoose.Schema<UserDoc>(
     role: {
       type: Number,
       enum: [Roles.USER, Roles.ADMIN],
-      default: Roles.USER
+      default: Roles.USER,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
     is_verified: {
       type: Boolean,
-      default: false
+      default: false,
     },
     created_at: {
       type: Date,
@@ -80,6 +85,7 @@ const userSchema = new mongoose.Schema<UserDoc>(
         delete ret.password;
         delete ret.__v;
         delete ret.role;
+        delete ret.isDeleted;
       },
     },
   }
@@ -87,6 +93,14 @@ const userSchema = new mongoose.Schema<UserDoc>(
 
 userSchema.static('generate', function generate(attrs: UserAttrs) {
   return new User(attrs);
+});
+
+userSchema.pre('find', function () {
+  this.where({ isDeleted: false });
+});
+
+userSchema.pre('findOne', function () {
+  this.where({ isDeleted: false });
 });
 
 userSchema.pre('save', async function (done) {

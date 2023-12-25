@@ -24,17 +24,24 @@ export const config = () => {
 };
 
 export class ImageService {
-  static imageUpload = async (file: string, folder: string, type: string) => {
+  static resourceUpload = async (
+    file: string,
+    folder: string,
+    type: string,
+    resource_type: string
+  ) => {
     config();
+    if(resource_type !== 'image' && resource_type !== 'video') throw new Error('Invalid resource type')
     try {
       const name = randomBytes(10).toString('hex');
       const result = await cloudinary.uploader.upload(file, {
         public_id: `${ROOT}/${type}/${folder}/${name}`,
+        resource_type,
       });
       return result;
     } catch (error) {
       console.log(error);
-      throw new BadRequestError('Image upload failed');
+      throw new BadRequestError('Resource upload failed: ');
     }
   };
   static deleteUploads = async (
@@ -46,7 +53,6 @@ export class ImageService {
       config();
       await cloudinary.api.delete_resources(files, {
         type: 'upload',
-        resource_type: 'image',
       });
       const path = `${ROOT}/${type}/${folderName}`;
       await cloudinary.api.delete_folder(path);
@@ -55,9 +61,7 @@ export class ImageService {
       throw new BadRequestError('Failed to delete resources');
     }
   };
-  static deleteImage = async (
-    file: string
-  ) => {
+  static deleteImage = async (file: string) => {
     try {
       config();
       await cloudinary.api.delete_resources([file], {
@@ -131,17 +135,21 @@ export class EmailService {
         to: user.email,
         subject: 'Email Verification',
         attachments: [
-          { filename: 'email.png', path: './attachments/email.png', cid: 'imagename' },
+          {
+            filename: 'email.png',
+            path: './attachments/email.png',
+            cid: 'imagename',
+          },
         ],
         context: {
-          token: `${process.env.SITE_URL}/api/verify-email/token/${token}`,
+          token: `${process.env.SITE_URL}/verify-email/${token}`,
         },
       };
       try {
         await transporter.sendMail(mailOptions);
         return true;
       } catch (error: any) {
-        throw new Error(error.message)
+        throw new Error(error.message);
       }
     }
   };
@@ -154,19 +162,22 @@ export class EmailService {
         to: user.email,
         subject: 'Password Reset',
         attachments: [
-          { filename: 'email.png', path: './attachments/email.png', cid: 'imagename' },
+          {
+            filename: 'email.png',
+            path: './attachments/email.png',
+            cid: 'imagename',
+          },
         ],
         context: {
-          token: `${process.env.SITE_URL}/api/reset-password/token/${token}`,
+          token: `${process.env.SITE_URL}/reset-password/${token}`,
         },
       };
       try {
         await transporter.sendMail(mailOptions);
         return true;
       } catch (error: any) {
-        throw new Error(error.message)
+        throw new Error(error.message);
       }
     }
   };
-
 }

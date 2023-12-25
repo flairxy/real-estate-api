@@ -2,11 +2,11 @@ import multer from 'multer';
 
 const upload = multer({
   limits: {
-    fileSize: 1000000, //1mb
+    fileSize: 10000000, //1mb
   },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error('Please upload a valid image file'));
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/) && !file.originalname.match(/\.(mp4|3gp|avi|WebM)$/)) {
+      return cb(new Error('Please upload a valid image or video file'));
     }
     cb(null, true);
   },

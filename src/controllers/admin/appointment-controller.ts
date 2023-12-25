@@ -18,27 +18,24 @@ export const find = async (req: Request, res: Response) => {
 };
 
 export const create = async (req: Request, res: Response) => {
-  const { list, date, userId, description } = req.body;
-  const user = await User.findById(userId);
-  if(!user) throw new NotFoundError("User not found");
+  const { list, name, email, phone, description } = req.body;
   const appointment = Appointment.generate({
     list,
-    user: user._id,
-    date,
-    description
+    name,
+    email,
+    phone,
+    description,
   });
   await appointment.save();
   res.status(201).send(appointment);
 };
 
 export const update = async (req: Request, res: Response) => {
-  const { list, date, userId, description } = req.body;
+  const { list, status } = req.body;
   const { id } = req.params;
-  const user = await User.findById(userId);
-  if(!user) throw new NotFoundError("User not found");
   const appointment = await Appointment.findOneAndUpdate(
     { _id: id },
-    { list, user: user._id, date, description },
+    { status },
     {
       new: true,
     }
@@ -48,6 +45,6 @@ export const update = async (req: Request, res: Response) => {
 
 export const deleteAppointment = async (req: Request, res: Response) => {
   const { id } = req.params;
-  await Appointment.deleteOne({_id: id});
+  await Appointment.deleteOne({ _id: id });
   res.status(201).send({ message: 'Appointment deleted successfully' });
 };

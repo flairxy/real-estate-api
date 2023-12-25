@@ -7,8 +7,8 @@ import {
   find,
   deleteListing,
   filter,
-  uploadImage,
-  deleteImage,
+  uploadResource,
+  deleteResource,
   updateFeaturedStatus,
 } from '../../controllers/admin/listing-controller';
 import { validateRequest } from '../../middlewares/validate-request';
@@ -33,12 +33,12 @@ router.get('/admin/listing', auth, admin, getListings);
 router.get('/admin/listing/:id', auth, admin, find);
 router.post('/admin/listing/filter', auth, admin, filter);
 router.post(
-  '/admin/listing/image-upload/:id',
+  '/admin/listing/resource-upload/:id',
   auth,
   admin,
-  multerUpload.single('image'),
+  multerUpload.single('file'),
   validateRequest,
-  uploadImage
+  uploadResource
 );
 router.post(
   '/admin/listing/create',
@@ -57,7 +57,7 @@ router.post(
   update
 );
 router.post('/admin/listing/delete/:id', auth, admin, deleteListing);
-router.post('/admin/listing/image/delete', auth, admin, deleteImage);
+router.post('/admin/listing/resource/delete', auth, admin, deleteResource);
 router.post('/admin/listing/featured/:id', auth, admin, updateFeaturedStatus);
 
 export { router as adminListRouter };

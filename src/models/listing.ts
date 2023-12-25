@@ -139,6 +139,8 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
         ret.id = ret._id;
         delete ret._id;
         delete ret.__v;
+        ret.videos = ret.images.filter((img: any) => img.resource_type === 'video');
+        ret.images = ret.images.filter((img: any) => img.resource_type === 'image');
       },
     },
     statics: {

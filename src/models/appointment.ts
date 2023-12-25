@@ -2,10 +2,11 @@ import mongoose from 'mongoose';
 import { AppontmentStatus } from '../utils/constants';
 
 export interface Properties {
-  description?: string;
+  description: string;
   list: mongoose.Schema.Types.ObjectId;
-  user: mongoose.Schema.Types.ObjectId;
-  date: Date;
+  name: string;
+  email: string;
+  phone: string;
 }
 
 //An interface that describes the properties that a user model has
@@ -15,11 +16,12 @@ interface AppointmentModel extends mongoose.Model<AppointmentDoc> {
 
 //An interface that describes the properties that a user document has
 interface AppointmentDoc extends mongoose.Document {
-  description?: string;
-  list?: mongoose.Schema.Types.ObjectId;
-  user?: mongoose.Schema.Types.ObjectId;
-  date: Date;
-  status: AppontmentStatus;
+  description: string;
+  list: mongoose.Schema.Types.ObjectId;
+  name: string;
+  phone: string;
+  email: string;
+  status?: boolean;
   created_at: Date;
   updated_at: Date;
 }
@@ -34,14 +36,12 @@ const appointmentSchema = new mongoose.Schema<AppointmentDoc>(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Listing'
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    date:{
-      type: Date,
+    name: {
+      type: String,
       required: true
     },
+    email: { type: String, required: true},
+    phone: { type: String, required: true},
     status: {
       type: Number,
       enum: [AppontmentStatus.PENDING, AppontmentStatus.COMPLETED],

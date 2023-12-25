@@ -8,6 +8,8 @@ import {
   updatePassword,
   resetPassword,
   resetToken,
+  verifyEmail,
+  refreshLink
 } from '../controllers/auth/auth-controller';
 import { validateRequest } from '../middlewares/validate-request';
 import { auth } from '../middlewares/authenticated';
@@ -60,5 +62,7 @@ router.post(
   updatePassword
 );
 router.post('/logout', logout);
+router.post('/verification/refresh', auth, refreshLink);
+router.post('/email/verify/:token', auth, verifyEmail);
 
 export { router as authRouter };

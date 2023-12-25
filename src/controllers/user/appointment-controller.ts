@@ -19,13 +19,14 @@ export const find = async (req: Request, res: Response) => {
 };
 
 export const create = async (req: Request, res: Response) => {
-  const { list, date, description } = req.body;
+  const { list, description, name, phone, email } = req.body;
   const user = await User.findById(req.currentUser?.id);
   if(!user) throw new NotFoundError('User not found');
   const appointment = Appointment.generate({
     list,
-    user: user._id,
-    date,
+    name,
+    phone,
+    email,
     description,
   });
   await appointment.save();

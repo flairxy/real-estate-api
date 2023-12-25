@@ -6,6 +6,7 @@ export interface Properties {
   user: mongoose.Schema.Types.ObjectId;
   amount: number;
   reference: string;
+  email: string;
   code: string;
   status?: TransactionStatus;
 }
@@ -22,6 +23,7 @@ interface TransactionDoc extends mongoose.Document {
   amount: number;
   status: TransactionStatus;
   reference: string;
+  email: string;
   code: string;
   txId: string;
   isDeleted: boolean;
@@ -34,12 +36,12 @@ const transactionSchema = new mongoose.Schema<TransactionDoc>(
     list: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Listing',
-      required: true
+      required: true,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
     },
     amount: {
       type: Number,
@@ -48,9 +50,13 @@ const transactionSchema = new mongoose.Schema<TransactionDoc>(
     status: {
       type: Number,
       enum: [TransactionStatus.PENDING, TransactionStatus.COMPLETED],
-      default: TransactionStatus.PENDING
+      default: TransactionStatus.PENDING,
     },
     reference: {
+      type: String,
+      required: true,
+    },
+    email: {
       type: String,
       required: true,
     },

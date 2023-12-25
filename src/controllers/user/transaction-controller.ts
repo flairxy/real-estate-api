@@ -29,6 +29,7 @@ export const create = async (req: Request, res: Response) => {
     reference: response.data.reference,
     code: response.data.access_code,
     status: TransactionStatus.PENDING,
+    email: user.email
   });
   await transaction.save();
   res.status(201).send(transaction);

@@ -40,7 +40,20 @@ export const register = async (req: Request, res: Response) => {
     if (!emailSent) throw new Error('Verification mail not sent');
     await session.commitTransaction();
     session.endSession();
-    res.status(201).send({ message: 'Verify Email' });
+    const userJwt = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        type: user.role,
+        is_verified: user.is_verified,
+      },
+      process.env.JWT_KEY!
+    );
+
+    res.status(201).send({ data: user, token: userJwt });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -73,7 +86,6 @@ export const login = async (req: Request, res: Response) => {
     },
     process.env.JWT_KEY! //the ! afer process.env.JWT_KEY is to stop typescript warning
   );
-  console.log(existingUser.role);
   // req.session = { token: userJwt };
   res.status(200).send({ data: existingUser, token });
 };
@@ -119,6 +131,7 @@ export const resetToken = async (req: Request, res: Response) => {
     if (!emailSent) throw new Error('Reset mail not sent');
     await session.commitTransaction();
     session.endSession();
+    res.send({});
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -131,7 +144,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
   if (!user) throw new NotFoundError();
   const token = await Token.findOne({
     user: user._id,
-    toekn: req.params.token,
+    token: req.params.token,
   });
   if (!token || (token && new Date(Date.now()) > new Date(token.expires)))
     throw new BadRequestError('Token Invalid or expired');
@@ -150,8 +163,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
     },
     process.env.JWT_KEY!
   );
-  req.session = { token: userJwt };
-  res.status(201).send(user);
+  res.status(201).send({ data: user, token: userJwt });
 };
 
 export const resetPassword = async (req: Request, res: Response) => {
@@ -159,7 +171,7 @@ export const resetPassword = async (req: Request, res: Response) => {
   session.startTransaction();
   try {
     const { password } = req.body;
-    const token_ = req.params;
+    const token_ = req.params.token;
     const token = await Token.findOne({ token: token_ });
     if (!token) throw new NotFoundError();
     const user = await User.findById(token.user);
@@ -170,6 +182,30 @@ export const resetPassword = async (req: Request, res: Response) => {
     user.password = password;
     await user.save();
     res.status(201).send({ message: 'Password reset successfully' });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+export const refreshLink = async (req: Request, res: Response) => {
+  const session = await mongoose.startSession();
+
+  session.startTransaction();
+  try {
+    const user = await User.findOne({ _id: req.currentUser!.id });
+    if (!user) throw new BadRequestError('User not found');
+
+    const tokenGen = randomBytes(20).toString('hex');
+    await Token.deleteMany({ user: user._id });
+    const token = Token.generate({ user: user._id, token: tokenGen });
+    await token.save();
+    const emailSent = await EmailService.verifyEmail(user, tokenGen);
+    if (!emailSent) throw new Error('Verification mail not sent');
+    await session.commitTransaction();
+    session.endSession();
+    res.status(201).send({ message: 'Verify Email' });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

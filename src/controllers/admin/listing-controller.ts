@@ -4,6 +4,7 @@ import { ImageService } from '../../services';
 import { Upload } from '../../models/upload';
 import { NotFoundError } from '../../errors/not-found-error';
 import { BadRequestError } from '../../errors/bad-request-error';
+import mongoose from 'mongoose';
 
 const IMAGES = 'images';
 const TYPE = 'listing';
@@ -58,7 +59,7 @@ export const create = async (req: Request, res: Response) => {
 export const updateFeaturedStatus = async (req: Request, res: Response) => {
   const id = req.params.id;
   const listing = await Listing.findById(id);
-  if(!listing) throw new NotFoundError();
+  if (!listing) throw new NotFoundError();
   listing.featured = !listing.featured;
   await listing.save();
   res.status(201).send(listing);
@@ -145,28 +146,46 @@ export const filter = async (req: Request, res: Response) => {
   res.send(listing);
 };
 
-export const uploadImage = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const image = req.file;
-  if (image === undefined) throw new BadRequestError('Images are required');
-  const b64 = Buffer.from(image.buffer).toString('base64');
-  const dataURI = 'data:' + image.mimetype + ';base64,' + b64;
-  const listing = await Listing.findById(id);
-  if (!listing) throw new NotFoundError();
-  const response = await ImageService.imageUpload(dataURI, id, TYPE);
-  const upload = Upload.generate({
-    url: response.url,
-    asset_id: response.asset_id,
-    public_id: response.public_id,
-  });
-  await upload.save();
+export const uploadResource = async (req: Request, res: Response) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { id } = req.params;
+    const file = req.file;
+    if (file === undefined) throw new BadRequestError('Images are required');
+    const utype: string = file.mimetype.split('/')[0];
+    const b64 = Buffer.from(file.buffer).toString('base64');
+    const dataURI = 'data:' + file.mimetype + ';base64,' + b64;
+    const listing = await Listing.findById(id);
+    if (!listing) throw new NotFoundError();
+    const response = await ImageService.resourceUpload(
+      dataURI,
+      id,
+      TYPE,
+      utype
+    );
+    const upload = Upload.generate({
+      url: response.url,
+      asset_id: response.asset_id,
+      public_id: response.public_id,
+      resource_type: utype,
+    });
+    await upload.save();
+    if (!upload) throw new Error('Upload not created');
 
-  listing.images = [...listing.images, upload._id];
-  listing.save();
-  res.status(201).send(listing);
+    listing.images = [...listing.images, upload._id];
+    listing.save();
+    await session.commitTransaction();
+    session.endSession();
+    res.status(201).send(listing);
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
-export const deleteImage = async (req: Request, res: Response) => {
+export const deleteResource = async (req: Request, res: Response) => {
   const { id, public_id } = req.body;
   const upload = await Upload.findById(id);
   if (upload) {
