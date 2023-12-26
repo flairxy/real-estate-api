@@ -4,6 +4,8 @@ import { Transaction } from '../../models/transaction';
 import { TransactionStatus } from '../../utils/constants';
 import { NotFoundError } from '../../errors/not-found-error';
 import { PaystackService } from '../../services';
+import mongoose from 'mongoose';
+import { UserListing } from '../../models/user-listing';
 
 const USER = 'user';
 const LISTING = 'list';
@@ -44,12 +46,28 @@ export const verify = async (req: Request, res: Response) => {
 };
 
 export const markAsCompleted = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const transaction = await Transaction.findById(id);
-  if (!transaction) throw new NotFoundError();
-  transaction.status = TransactionStatus.COMPLETED;
-  await transaction.save();
-  res.status(201).send(transaction);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { id } = req.params;
+    const transaction = await Transaction.findById(id);
+    if (!transaction) throw new NotFoundError();
+    transaction.status = TransactionStatus.COMPLETED;
+    await transaction.save();
+    const userListing = await UserListing.create({
+      user: transaction.user,
+      listing: transaction.list,
+      transaction: transaction._id,
+    });
+    if (!userListing) throw new Error('Failed to create user listing');
+    await session.commitTransaction();
+    session.endSession();
+    res.status(201).send(transaction);
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 export const markAsPending = async (req: Request, res: Response) => {

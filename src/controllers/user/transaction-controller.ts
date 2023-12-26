@@ -7,6 +7,20 @@ import { User } from '../../models/user';
 import { NotAuthorizedError } from '../../errors/not-authorized-error';
 import { Listing } from '../../models/listing';
 import { NotFoundError } from '../../errors/not-found-error';
+import { UserListing } from '../../models/user-listing';
+
+const LISTING = 'listing';
+export const getListing = async (req: Request, res: Response) => {
+  const user = req.currentUser;
+  const listings = await UserListing.find({ user: user?.id }).populate(LISTING);
+  res.send(listings);
+};
+
+export const getTransactions = async (req: Request, res: Response) => {
+  const user = req.currentUser;
+  const transactions = await Transaction.find({ user: user?.id });
+  res.send(transactions);
+};
 
 export const create = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -20,7 +34,7 @@ export const create = async (req: Request, res: Response) => {
     user.email,
     listing.price.toString()
   );
-  if (!response || !response.data.referrence || !response.data.access_code)
+  if ((!response && !response.data.reference) || !response.data.access_code)
     throw new BadRequestError('Failed to initiate transaction.');
   const transaction = Transaction.generate({
     list: listing.id,
@@ -29,10 +43,13 @@ export const create = async (req: Request, res: Response) => {
     reference: response.data.reference,
     code: response.data.access_code,
     status: TransactionStatus.PENDING,
-    email: user.email
+    email: user.email,
   });
   await transaction.save();
-  res.status(201).send(transaction);
+  //lock listing
+  listing.locked = true;
+  await listing.save();
+  res.status(201).send({ url: response.data.authorization_url });
 };
 
 export const verify = async (req: Request, res: Response) => {

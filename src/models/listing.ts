@@ -34,6 +34,7 @@ export interface Properties {
   coordinate?: Coodinate;
   status?: ListingStatus;
   featured?: boolean;
+  locked?: boolean;
 }
 
 //An interface that describes the properties that a user model has
@@ -58,6 +59,7 @@ interface ListingDoc extends mongoose.Document {
   coordinate: Coodinate;
   status: ListingStatus;
   featured: boolean;
+  locked: boolean;
   created_at: Date;
   updated_at: Date;
 }
@@ -120,6 +122,10 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
       default: ListingStatus.PENDING,
     },
     featured: {
+      type: Boolean,
+      default: false,
+    },
+    locked: {
       type: Boolean,
       default: false,
     },
