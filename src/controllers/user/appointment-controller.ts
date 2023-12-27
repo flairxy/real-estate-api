@@ -3,6 +3,7 @@ import { Appointment } from '../../models/appointment';
 import { User } from '../../models/user';
 import { NotAuthorizedError } from '../../errors/not-authorized-error';
 import { NotFoundError } from '../../errors/not-found-error';
+import { EmailService } from '../../services';
 
 const USER = 'user';
 const LIST = 'list';
@@ -20,8 +21,6 @@ export const find = async (req: Request, res: Response) => {
 
 export const create = async (req: Request, res: Response) => {
   const { list, description, name, phone, email } = req.body;
-  const user = await User.findById(req.currentUser?.id);
-  if(!user) throw new NotFoundError('User not found');
   const appointment = Appointment.generate({
     list,
     name,
@@ -30,6 +29,8 @@ export const create = async (req: Request, res: Response) => {
     description,
   });
   await appointment.save();
+  const link = `${process.env.SITE_URL}/list/${list}`;
+  await EmailService.scheduleAppointment(email, name, description, phone, link);
   res.status(201).send(appointment);
 };
 

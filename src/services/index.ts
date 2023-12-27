@@ -31,7 +31,8 @@ export class ImageService {
     resource_type: string
   ) => {
     config();
-    if(resource_type !== 'image' && resource_type !== 'video') throw new Error('Invalid resource type')
+    if (resource_type !== 'image' && resource_type !== 'video')
+      throw new Error('Invalid resource type');
     try {
       const name = randomBytes(10).toString('hex');
       const result = await cloudinary.uploader.upload(file, {
@@ -143,6 +144,36 @@ export class EmailService {
         ],
         context: {
           token: `${process.env.SITE_URL}/verify-email/${token}`,
+        },
+      };
+      try {
+        await transporter.sendMail(mailOptions);
+        return true;
+      } catch (error: any) {
+        throw new Error(error.message);
+      }
+    }
+  };
+  static scheduleAppointment = async (
+    email: string,
+    name: string,
+    message: string,
+    phone: string,
+    link: string
+  ) => {
+    const transporter = this.config();
+    if (email) {
+      const mailOptions = {
+        from: email, // sender address
+        template: 'appointment-email', // the name of the template file, i.e., verify-email.handlebars
+        to: 'care@pdrealestates.com',
+        subject: 'Appointment Scheduled',
+        context: {
+          name,
+          email,
+          phone,
+          message,
+          link
         },
       };
       try {

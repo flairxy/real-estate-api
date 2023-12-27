@@ -9,8 +9,8 @@ import { auth } from '../../middlewares/authenticated';
 
 const router = express.Router();
 router.post('/user/transaction/:id/create', auth, create);
-router.post('/user/transaction/:id/verify', verify);
-router.post('/user/listing', auth, getListing);
+router.get('/user/listings', auth, getListing);
 router.post('/user/transactions', auth, getTransactions);
+router.post('/user/transaction/:reference/verify', verify);
 
 export { router as userTransactionRouter };

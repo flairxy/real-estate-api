@@ -3,12 +3,13 @@ import { BadRequestError } from '../../errors/bad-request-error';
 import { User } from '../../models/user';
 import jwt from 'jsonwebtoken';
 import { PasswordManager } from '../../services/password-manager';
-import { Roles } from '../../utils/constants';
+import { ListingStatus, Roles } from '../../utils/constants';
 import { EmailService } from '../../services';
 import { Token } from '../../models/token';
 import { randomBytes } from 'crypto';
 import mongoose from 'mongoose';
 import { NotFoundError } from '../../errors/not-found-error';
+import { Listing } from '../../models/listing';
 
 export const authUser = async (req: Request, res: Response) => {
   res.send({ currentUser: req.currentUser || null });
@@ -211,4 +212,24 @@ export const refreshLink = async (req: Request, res: Response) => {
     session.endSession();
     throw error;
   }
+};
+
+export const runJobs = async (req: Request, res: Response) => {
+  // unlock locked listings
+  const admin = await User.findOne({ role: Roles.ADMIN });
+  const listings = await Listing.find({
+    locked: true,
+    status: ListingStatus.ACTIVE,
+  });
+  for (const listing of listings) {
+    const lockedMinutes = new Date(listing.locked_at).getMinutes();
+    const currentMinutes = new Date(Date.now()).getMinutes();
+    const isDue = currentMinutes - lockedMinutes > 5;
+    if (isDue) {
+      listing.locked = false;
+      listing.locked_by = admin?._id;
+      await listing.save();
+    }
+  }
+  res.send('Jobs successful');
 };

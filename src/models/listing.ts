@@ -35,6 +35,8 @@ export interface Properties {
   status?: ListingStatus;
   featured?: boolean;
   locked?: boolean;
+  locked_at?: Date;
+  locked_by?: mongoose.Schema.Types.ObjectId;
 }
 
 //An interface that describes the properties that a user model has
@@ -60,6 +62,8 @@ interface ListingDoc extends mongoose.Document {
   status: ListingStatus;
   featured: boolean;
   locked: boolean;
+  locked_by: mongoose.Schema.Types.ObjectId;
+  locked_at: Date;
   created_at: Date;
   updated_at: Date;
 }
@@ -128,6 +132,14 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
     locked: {
       type: Boolean,
       default: false,
+    },
+    locked_at: {
+      type: Date,
+      default: Date.now(),
+    },
+    locked_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: false
     },
     created_at: {
       type: Date,

@@ -9,7 +9,8 @@ import {
   resetPassword,
   resetToken,
   verifyEmail,
-  refreshLink
+  refreshLink,
+  runJobs
 } from '../controllers/auth/auth-controller';
 import { validateRequest } from '../middlewares/validate-request';
 import { auth } from '../middlewares/authenticated';
@@ -64,5 +65,6 @@ router.post(
 router.post('/logout', logout);
 router.post('/verification/refresh', auth, refreshLink);
 router.post('/email/verify/:token', auth, verifyEmail);
+router.get('/run-jobs', runJobs)
 
 export { router as authRouter };
