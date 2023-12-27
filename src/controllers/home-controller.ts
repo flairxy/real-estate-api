@@ -15,6 +15,13 @@ export const getFeaturedListing = async (req: Request, res: Response) => {
   res.send(listings);
 };
 
+export const getListings = async (req: Request, res: Response) => {
+  const listings = await Listing.find({ status: ListingStatus.ACTIVE, locked: false }).populate(
+    IMAGES
+  );
+  res.send(listings);
+};
+
 export const getListing = async (req: Request, res: Response) => {
   const { id } = req.params;
   const listings = await Listing.findById(id).populate(IMAGES);
