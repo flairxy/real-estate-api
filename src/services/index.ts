@@ -120,10 +120,10 @@ export class EmailService {
       'compile',
       hbs({
         viewEngine: {
-          partialsDir: path.resolve('./views/'),
+          partialsDir: path.resolve('./src/views/'),
           defaultLayout: false,
         },
-        viewPath: path.resolve('./views/'),
+        viewPath: path.resolve('./src/views/'),
       })
     );
     return transport;
