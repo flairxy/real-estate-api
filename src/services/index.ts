@@ -107,11 +107,12 @@ export class PaystackService {
 export class EmailService {
   static config = () => {
     let transport = nodemailer.createTransport({
-      host: 'sandbox.smtp.mailtrap.io',
-      port: 2525,
+      host: 'smtp.pdrealestates.com',
+      port: 465,
+      secure: true,
       auth: {
-        user: 'cc8729d47376ab',
-        pass: 'b54e4b98565a2a',
+        user: process.env.WEBMAIL_EMAIL,
+        pass: process.env.WEBMAIL_PASSWORD,
       },
     });
 
