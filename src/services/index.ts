@@ -107,23 +107,24 @@ export class PaystackService {
 export class EmailService {
   static config = () => {
     let transport = nodemailer.createTransport({
-      host: 'smtp.pdrealestates.com',
-      port: 465,
-      secure: true,
+      host: 'mail.pdrealestates.com',
+      port: 26,
+      secure: false,
       auth: {
         user: process.env.WEBMAIL_EMAIL,
         pass: process.env.WEBMAIL_PASSWORD,
       },
+  
     });
 
     transport.use(
       'compile',
       hbs({
         viewEngine: {
-          partialsDir: path.resolve('./src/views/'),
+          partialsDir: path.resolve('./views/'),
           defaultLayout: false,
         },
-        viewPath: path.resolve('./src/views/'),
+        viewPath: path.resolve('./views/'),
       })
     );
     return transport;
