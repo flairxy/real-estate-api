@@ -177,8 +177,9 @@ export const uploadResource = async (req: Request, res: Response) => {
     listing.save();
     await session.commitTransaction();
     session.endSession();
-    res.status(201).send(listing);
+    res.status(201).send('Upload succesfull');
   } catch (error) {
+    console.log(error)
     await session.abortTransaction();
     session.endSession();
     throw error;
