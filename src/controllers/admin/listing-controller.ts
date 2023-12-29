@@ -174,10 +174,10 @@ export const uploadResource = async (req: Request, res: Response) => {
     if (!upload) throw new Error('Upload not created');
 
     listing.images = [...listing.images, upload._id];
-    listing.save();
+    await listing.save();
     await session.commitTransaction();
     session.endSession();
-    res.status(201).send('Upload succesfull');
+    res.status(201).send(listing);
   } catch (error) {
     console.log(error)
     await session.abortTransaction();
