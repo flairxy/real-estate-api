@@ -109,7 +109,6 @@ export class EmailService {
     let transport = nodemailer.createTransport({
       host: 'pdrealestates.com',
       port: 465,
-      secure: true,
       auth: {
         user: process.env.WEBMAIL_EMAIL,
         pass: process.env.WEBMAIL_PASSWORD,
