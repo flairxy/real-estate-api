@@ -25,7 +25,7 @@ dotenv.config();
 const app = express();
 app.use(morganMiddleware);
 app.use(json({ limit: '30mb' }));
-app.use(cors({ origin: 'https://exquisite-starburst-9b1d6b.netlify.app' }));
+app.use(cors({ origin: 'https://pdrealestates.com' }));
 
 app.use('/.netlify/functions/api', authRouter);
 app.use('/.netlify/functions/api', userTransactionRouter);
