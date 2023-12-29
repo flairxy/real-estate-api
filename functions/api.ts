@@ -25,7 +25,7 @@ dotenv.config();
 const app = express();
 app.use(morganMiddleware);
 app.use(json({ limit: '30mb' }));
-app.use(cors());
+app.use(cors({ origin: 'https://exquisite-starburst-9b1d6b.netlify.app' }));
 
 app.use('/.netlify/functions/api', authRouter);
 app.use('/.netlify/functions/api', userTransactionRouter);
@@ -65,7 +65,7 @@ if (!process.env.MONGO_URI) {
 
 const handler = serverless(app);
 module.exports.handler = async (event: any, context: any) => {
-  const client = await mongoose.connect(process.env.MONGO_URI!)
+  const client = await mongoose.connect(process.env.MONGO_URI!);
   const result = await handler(event, context);
   await client.disconnect();
   return result;
