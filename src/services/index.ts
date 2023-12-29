@@ -107,14 +107,13 @@ export class PaystackService {
 export class EmailService {
   static config = () => {
     let transport = nodemailer.createTransport({
-      host: 'mail.pdrealestates.com',
-      port: 26,
-      secure: false,
+      host: 'pdrealestates.com',
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.WEBMAIL_EMAIL,
         pass: process.env.WEBMAIL_PASSWORD,
       },
-  
     });
 
     transport.use(
@@ -137,13 +136,7 @@ export class EmailService {
         template: 'verify-email', // the name of the template file, i.e., verify-email.handlebars
         to: user.email,
         subject: 'Email Verification',
-        attachments: [
-          {
-            filename: 'email.png',
-            path: './attachments/email.png',
-            cid: 'imagename',
-          },
-        ],
+
         context: {
           token: `${process.env.SITE_URL}/verify-email/${token}`,
         },
@@ -175,7 +168,7 @@ export class EmailService {
           email,
           phone,
           message,
-          link
+          link,
         },
       };
       try {
