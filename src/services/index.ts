@@ -5,6 +5,9 @@ import axios from 'axios';
 import hbs from 'nodemailer-express-handlebars';
 import nodemailer from 'nodemailer';
 import path from 'path';
+import { verifyEmailTemplate } from './emails/verify-emails';
+import { scheduleAppointmentTemplate } from './emails/schedule-appointment';
+import { passwordResetTemplate } from './emails/password-reset';
 
 const SECURE = 'production';
 const ROOT = 'dynasty';
@@ -109,22 +112,12 @@ export class EmailService {
     let transport = nodemailer.createTransport({
       host: 'pdrealestates.com',
       port: 465,
+      secure: true,
       auth: {
         user: process.env.WEBMAIL_EMAIL,
         pass: process.env.WEBMAIL_PASSWORD,
       },
     });
-
-    transport.use(
-      'compile',
-      hbs({
-        viewEngine: {
-          partialsDir: path.resolve('./views/'),
-          defaultLayout: false,
-        },
-        viewPath: path.resolve('./views/'),
-      })
-    );
     return transport;
   };
   static verifyEmail = async (user: User, token: string) => {
@@ -132,13 +125,11 @@ export class EmailService {
     if (user.email) {
       const mailOptions = {
         from: process.env.MAIL_FROM, // sender address
-        template: 'verify-email', // the name of the template file, i.e., verify-email.handlebars
         to: user.email,
         subject: 'Email Verification',
-
-        context: {
-          token: `${process.env.SITE_URL}/verify-email/${token}`,
-        },
+        html: verifyEmailTemplate(
+          `${process.env.SITE_URL}/verify-email/${token}`
+        ),
       };
       try {
         await transporter.sendMail(mailOptions);
@@ -159,16 +150,9 @@ export class EmailService {
     if (email) {
       const mailOptions = {
         from: email, // sender address
-        template: 'appointment-email', // the name of the template file, i.e., verify-email.handlebars
         to: 'care@pdrealestates.com',
         subject: 'Appointment Scheduled',
-        context: {
-          name,
-          email,
-          phone,
-          message,
-          link,
-        },
+        html: scheduleAppointmentTemplate(name, email, phone, message, link),
       };
       try {
         await transporter.sendMail(mailOptions);
@@ -183,19 +167,11 @@ export class EmailService {
     if (user.email) {
       const mailOptions = {
         from: process.env.MAIL_FROM, // sender address
-        template: 'password-reset', // the name of the template file, i.e., verify-email.handlebars
         to: user.email,
         subject: 'Password Reset',
-        attachments: [
-          {
-            filename: 'email.png',
-            path: './attachments/email.png',
-            cid: 'imagename',
-          },
-        ],
-        context: {
-          token: `${process.env.SITE_URL}/reset-password/${token}`,
-        },
+        html: passwordResetTemplate(
+          `${process.env.SITE_URL}/reset-password/${token}`
+        ),
       };
       try {
         await transporter.sendMail(mailOptions);
