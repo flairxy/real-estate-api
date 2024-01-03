@@ -36,8 +36,10 @@ export const create = async (req: Request, res: Response) => {
     accessories,
     coordinate,
     code,
+    currency
   } = req.body;
   const listing = Listing.generate({
+    currency,
     title,
     description,
     type,
@@ -81,6 +83,7 @@ export const update = async (req: Request, res: Response) => {
     accessories,
     coordinate,
     code,
+    currency
   } = req.body;
   const { id } = req.params;
   const listing = await Listing.findOneAndUpdate(
@@ -100,6 +103,7 @@ export const update = async (req: Request, res: Response) => {
       accessories,
       coordinate,
       code,
+      currency
     },
     {
       new: true,

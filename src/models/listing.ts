@@ -28,6 +28,7 @@ export interface Properties {
   address: string;
   country: string;
   state: string;
+  currency: string;
   price: number;
   landmarks?: mongoose.Schema.Types.Mixed[];
   accessories?: Accessories;
@@ -54,6 +55,7 @@ interface ListingDoc extends mongoose.Document {
   address: string;
   country: string;
   state: string;
+  currency: string;
   code: string;
   price: number;
   landmarks: mongoose.Schema.Types.Mixed[];
@@ -73,6 +75,10 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
     title: {
       type: String,
       required: true,
+    },
+    currency: {
+      type: String,
+      default: 'NGN',
     },
     description: {
       type: String,
@@ -139,7 +145,7 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
     },
     locked_by: {
       type: mongoose.Schema.Types.ObjectId,
-      required: false
+      required: false,
     },
     created_at: {
       type: Date,
@@ -157,8 +163,12 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
         ret.id = ret._id;
         delete ret._id;
         delete ret.__v;
-        ret.videos = ret.images.filter((img: any) => img.resource_type === 'video');
-        ret.images = ret.images.filter((img: any) => img.resource_type === 'image');
+        ret.videos = ret.images.filter(
+          (img: any) => img.resource_type === 'video'
+        );
+        ret.images = ret.images.filter(
+          (img: any) => img.resource_type === 'image'
+        );
       },
     },
     statics: {
