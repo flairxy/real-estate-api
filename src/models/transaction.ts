@@ -23,7 +23,7 @@ interface TransactionDoc extends mongoose.Document {
   user: mongoose.Schema.Types.ObjectId;
   amount: number;
   status: TransactionStatus;
-  reference?: string;
+  reference: string;
   email: string;
   code?: string;
   txId: string;
