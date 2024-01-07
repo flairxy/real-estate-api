@@ -25,7 +25,7 @@ interface TransactionDoc extends mongoose.Document {
   status: TransactionStatus;
   reference?: string;
   email: string;
-  code: string;
+  code?: string;
   txId: string;
   isDeleted: boolean;
   created_at: Date;
@@ -64,7 +64,7 @@ const transactionSchema = new mongoose.Schema<TransactionDoc>(
     },
     code: {
       type: String,
-      required: true,
+      required: false,
     },
     txId: {
       type: String,
