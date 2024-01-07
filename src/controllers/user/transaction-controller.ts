@@ -42,7 +42,7 @@ export const create = async (req: Request, res: Response) => {
   if (listing.locked && user._id !== listing.locked_by)
     throw new BadRequestError('Unable to process request');
 
-  if (listing.price <= 10000000) {
+  if (listing.price <= 200000000) {
     const response = await PaystackService.initialize(
       user.email,
       listing.price.toString()
