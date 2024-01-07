@@ -9,6 +9,7 @@ import { Listing } from '../../models/listing';
 import { NotFoundError } from '../../errors/not-found-error';
 import { UserListing } from '../../models/user-listing';
 import { CustomError } from '../../errors/custom-error';
+import { randomChars } from '../../utils/password';
 
 const LISTING = 'listing';
 export const getListing = async (req: Request, res: Response) => {
@@ -40,27 +41,46 @@ export const create = async (req: Request, res: Response) => {
   if (!listing) throw new NotFoundError('Invalid Listing');
   if (listing.locked && user._id !== listing.locked_by)
     throw new BadRequestError('Unable to process request');
-  const response = await PaystackService.initialize(
-    user.email,
-    listing.price.toString()
-  );
-  if ((!response && !response.data.reference) || !response.data.access_code)
-    throw new BadRequestError('Failed to initiate transaction.');
-  const transaction = Transaction.generate({
-    list: listing.id,
-    user: user.id,
-    amount: listing.price,
-    reference: response.data.reference,
-    code: response.data.access_code,
-    status: TransactionStatus.PENDING,
-    email: user.email,
-  });
-  await transaction.save();
-  //lock listing
-  listing.locked = true;
-  listing.locked_at = new Date(Date.now());
-  await listing.save();
-  res.status(201).send({ url: response.data.authorization_url });
+
+  if (listing.price <= 10000000) {
+    const response = await PaystackService.initialize(
+      user.email,
+      listing.price.toString()
+    );
+    if ((!response && !response.data.reference) || !response.data.access_code)
+      throw new BadRequestError('Failed to initiate transaction.');
+    const transaction = Transaction.generate({
+      list: listing.id,
+      user: user.id,
+      amount: listing.price,
+      reference: response.data.reference,
+      code: response.data.access_code,
+      status: TransactionStatus.PENDING,
+      email: user.email,
+    });
+    await transaction.save();
+    //lock listing
+    listing.locked = true;
+    listing.locked_at = new Date(Date.now());
+    await listing.save();
+    res.status(201).send({ url: response.data.authorization_url });
+  } else {
+    const transaction = Transaction.generate({
+      list: listing.id,
+      user: user.id,
+      amount: listing.price,
+      reference: randomChars(9),
+      status: TransactionStatus.PENDING,
+      email: user.email,
+      isTransfer: true,
+    });
+    await transaction.save();
+    //lock listing
+    listing.locked = true;
+    listing.locked_at = new Date(Date.now());
+    await listing.save();
+    res.status(201).send('success');
+  }
 };
 
 export const verify = async (req: Request, res: Response) => {

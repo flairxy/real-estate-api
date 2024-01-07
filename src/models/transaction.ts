@@ -7,8 +7,9 @@ export interface Properties {
   amount: number;
   reference: string;
   email: string;
-  code: string;
+  code?: string;
   status?: TransactionStatus;
+  isTransfer?: boolean;
 }
 
 //An interface that describes the properties that a user model has
@@ -22,13 +23,14 @@ interface TransactionDoc extends mongoose.Document {
   user: mongoose.Schema.Types.ObjectId;
   amount: number;
   status: TransactionStatus;
-  reference: string;
+  reference?: string;
   email: string;
   code: string;
   txId: string;
   isDeleted: boolean;
   created_at: Date;
   updated_at: Date;
+  isTransfer: boolean;
 }
 
 const transactionSchema = new mongoose.Schema<TransactionDoc>(
@@ -67,6 +69,10 @@ const transactionSchema = new mongoose.Schema<TransactionDoc>(
     txId: {
       type: String,
       required: false,
+    },
+    isTransfer: {
+      type: Boolean,
+      default: false,
     },
     isDeleted: {
       type: Boolean,

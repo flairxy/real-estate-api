@@ -91,19 +91,23 @@ export class PaystackService {
   };
 
   static initialize = async (email: string, amount: string) => {
-    const params = JSON.stringify({
-      email,
-      amount: `${amount}00`,
-    });
+    try {
+      const params = JSON.stringify({
+        email,
+        amount: `${amount}00`,
+      });
 
-    const url = 'https://api.paystack.co/transaction/initialize';
-    const response = await axios.post(url, params, {
-      headers: {
-        Authorization: `Bearer ${process.env.PAYSTACK_SECRET}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data;
+      const url = 'https://api.paystack.co/transaction/initialize';
+      const response = await axios.post(url, params, {
+        headers: {
+          Authorization: `Bearer ${process.env.PAYSTACK_SECRET}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error);
+    }
   };
 }
 
