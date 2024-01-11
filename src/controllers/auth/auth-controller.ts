@@ -221,10 +221,13 @@ export const runJobs = async (req: Request, res: Response) => {
     locked: true,
     status: ListingStatus.ACTIVE,
   });
+ 
   for (const listing of listings) {
-    const lockedMinutes = new Date(listing.locked_at).getMinutes();
-    const currentMinutes = new Date(Date.now()).getMinutes();
-    const isDue = currentMinutes - lockedMinutes > 5;
+    const lockedMinutes = new Date(listing.locked_at).getTime();
+    const currentMinutes = new Date(Date.now()).getTime();
+    const diff = (currentMinutes - lockedMinutes )/ 1000;
+    const ti = Math.abs(Math.round(diff/60))
+    const isDue = ti > 5;
     if (isDue) {
       listing.locked = false;
       listing.locked_by = admin?._id;
