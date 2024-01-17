@@ -10,7 +10,7 @@ import { scheduleAppointmentTemplate } from './emails/schedule-appointment';
 import { passwordResetTemplate } from './emails/password-reset';
 
 const SECURE = 'production';
-const ROOT = 'dynasty';
+const ROOT = 'greengardens';
 
 interface User {
   email: string;
@@ -114,7 +114,7 @@ export class PaystackService {
 export class EmailService {
   static config = () => {
     let transport = nodemailer.createTransport({
-      host: 'pdrealestates.com',
+      host: 'greengardensltd.com',
       port: 465,
       secure: true,
       auth: {
@@ -154,7 +154,7 @@ export class EmailService {
     if (email) {
       const mailOptions = {
         from: email, // sender address
-        to: 'care@pdrealestates.com',
+        to: 'care@greengardensltd.com',
         subject: 'Appointment Scheduled',
         html: scheduleAppointmentTemplate(name, email, phone, message, link),
       };

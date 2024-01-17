@@ -12,14 +12,28 @@ export const getFeaturedListing = async (req: Request, res: Response) => {
     locked: false,
     status: ListingStatus.ACTIVE,
   }).populate(IMAGES);
-  res.send(listings);
+  const sListings = listings.slice(0, 6);
+  res.send(sListings);
 };
 
 export const getListings = async (req: Request, res: Response) => {
-  const listings = await Listing.find({ status: ListingStatus.ACTIVE, locked: false }).populate(
-    IMAGES
-  );
-  res.send(listings);
+  const { page } = req.query;
+  const p = page as any as number;
+  const pageSize = 9;
+  let startIndex = (p - 1) * pageSize;
+  let endIndex = p * pageSize;
+  const listings = await Listing.find({
+    status: ListingStatus.ACTIVE,
+    locked: false,
+  }).populate(IMAGES);
+  const totalListings = listings.length;
+  const paginatedListings = listings.slice(startIndex, endIndex);
+  const totalPage = Math.ceil(listings.length / pageSize);
+  res.send({
+    properties: paginatedListings,
+    totalPage,
+    totalListings,
+  });
 };
 
 export const getListing = async (req: Request, res: Response) => {

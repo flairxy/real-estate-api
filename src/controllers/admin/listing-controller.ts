@@ -10,8 +10,20 @@ const IMAGES = 'images';
 const TYPE = 'listing';
 
 export const getListings = async (req: Request, res: Response) => {
+  const { page } = req.query;
+  const p = page as any as number;
+  const pageSize = 9;
+  let startIndex = (p - 1) * pageSize;
+  let endIndex = p * pageSize;
   const listings = await Listing.find({}).populate(IMAGES);
-  res.send(listings);
+  const totalListings = listings.length;
+  const paginatedListings = listings.slice(startIndex, endIndex);
+  const totalPage = Math.ceil(listings.length / pageSize);
+  res.send({
+    properties: paginatedListings,
+    totalPage,
+    totalListings,
+  });
 };
 
 export const find = async (req: Request, res: Response) => {
@@ -36,7 +48,7 @@ export const create = async (req: Request, res: Response) => {
     accessories,
     coordinate,
     code,
-    currency
+    currency,
   } = req.body;
   const listing = Listing.generate({
     currency,
@@ -83,7 +95,7 @@ export const update = async (req: Request, res: Response) => {
     accessories,
     coordinate,
     code,
-    currency
+    currency,
   } = req.body;
   const { id } = req.params;
   const listing = await Listing.findOneAndUpdate(
@@ -103,7 +115,7 @@ export const update = async (req: Request, res: Response) => {
       accessories,
       coordinate,
       code,
-      currency
+      currency,
     },
     {
       new: true,
@@ -183,7 +195,7 @@ export const uploadResource = async (req: Request, res: Response) => {
     session.endSession();
     res.status(201).send(listing);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     await session.abortTransaction();
     session.endSession();
     throw error;
