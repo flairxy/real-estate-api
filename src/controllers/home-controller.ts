@@ -19,7 +19,7 @@ export const getFeaturedListing = async (req: Request, res: Response) => {
 export const getListings = async (req: Request, res: Response) => {
   const { page } = req.query;
   const p = page as any as number;
-  const pageSize = 9;
+  const pageSize = 6;
   let startIndex = (p - 1) * pageSize;
   let endIndex = p * pageSize;
   const listings = await Listing.find({
