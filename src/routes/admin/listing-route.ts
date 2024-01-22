@@ -10,6 +10,7 @@ import {
   uploadResource,
   deleteResource,
   updateFeaturedStatus,
+  setImageUrl
 } from '../../controllers/admin/listing-controller';
 import { validateRequest } from '../../middlewares/validate-request';
 import { admin } from '../../middlewares/admin';
@@ -59,5 +60,6 @@ router.post(
 router.post('/admin/listing/delete/:id', auth, admin, deleteListing);
 router.post('/admin/listing/resource/delete', auth, admin, deleteResource);
 router.post('/admin/listing/featured/:id', auth, admin, updateFeaturedStatus);
+router.post('/admin/listing/image/:id', auth, admin, setImageUrl);
 
 export { router as adminListRouter };

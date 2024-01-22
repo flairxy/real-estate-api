@@ -26,6 +26,16 @@ export const getListings = async (req: Request, res: Response) => {
   });
 };
 
+export const setImageUrl = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { url } = req.body;
+  const listing = await Listing.findById(id);
+  if (!listing) throw new NotFoundError();
+  listing.imageUrl = url;
+  await listing.save();
+  res.status(201).send(listing);
+};
+
 export const find = async (req: Request, res: Response) => {
   const { id } = req.params;
   const listing = await Listing.findById(id).populate(IMAGES);
@@ -180,8 +190,15 @@ export const uploadResource = async (req: Request, res: Response) => {
       TYPE,
       utype
     );
+    let url = response.url;
+    const urlSplit = url.split('http://');
+    const notSecure = url.split('http://').length > 1;
+    if (notSecure) {
+      const newUrl = 'https://' + urlSplit[1];
+      url = newUrl;
+    }
     const upload = Upload.generate({
-      url: response.url,
+      url,
       asset_id: response.asset_id,
       public_id: response.public_id,
       resource_type: utype,

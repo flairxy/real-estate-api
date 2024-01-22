@@ -30,6 +30,7 @@ export interface Properties {
   state: string;
   currency: string;
   price: number;
+  imageUrl?: string;
   landmarks?: mongoose.Schema.Types.Mixed[];
   accessories?: Accessories;
   coordinate?: Coodinate;
@@ -58,6 +59,7 @@ interface ListingDoc extends mongoose.Document {
   currency: string;
   code: string;
   price: number;
+  imageUrl?: string;
   landmarks: mongoose.Schema.Types.Mixed[];
   accessories: Accessories;
   coordinate: Coodinate;
@@ -98,6 +100,9 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
       required: true,
     },
     code: {
+      type: String,
+    },
+    imageUrl: {
       type: String,
     },
     country: {

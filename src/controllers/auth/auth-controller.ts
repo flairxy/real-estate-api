@@ -10,6 +10,7 @@ import { randomBytes } from 'crypto';
 import mongoose from 'mongoose';
 import { NotFoundError } from '../../errors/not-found-error';
 import { Listing } from '../../models/listing';
+import { Upload } from '../../models/upload';
 
 export const authUser = async (req: Request, res: Response) => {
   res.send({ currentUser: req.currentUser || null });
@@ -215,23 +216,14 @@ export const refreshLink = async (req: Request, res: Response) => {
 };
 
 export const runJobs = async (req: Request, res: Response) => {
-  // unlock locked listings
-  const admin = await User.findOne({ role: Roles.ADMIN });
-  const listings = await Listing.find({
-    locked: true,
-    status: ListingStatus.ACTIVE,
-  });
- 
-  for (const listing of listings) {
-    const lockedMinutes = new Date(listing.locked_at).getTime();
-    const currentMinutes = new Date(Date.now()).getTime();
-    const diff = (currentMinutes - lockedMinutes )/ 1000;
-    const ti = Math.abs(Math.round(diff/60))
-    const isDue = ti > 5;
-    if (isDue) {
-      listing.locked = false;
-      listing.locked_by = admin?._id;
-      await listing.save();
+  const uploads = await Upload.find({});
+  for (const upload of uploads) {
+    const urlSplit = upload.url.split('http://');
+    const notSecure = upload.url.split('http://').length > 1;
+    if (notSecure) {
+      const newUrl = 'https://' + urlSplit[1];
+      upload.url = newUrl;
+      await upload.save();
     }
   }
   res.send('Jobs successful');
