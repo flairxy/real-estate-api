@@ -12,9 +12,10 @@ export const getFeaturedListing = async (req: Request, res: Response) => {
     locked: false,
     status: ListingStatus.ACTIVE,
   }).populate(IMAGES);
-  const sListings = listings.slice(0, 6);
-  res.send(sListings);
+  // const sListings = listings.slice(0, 6);
+  res.send(listings);
 };
+
 
 export const getListings = async (req: Request, res: Response) => {
   const { page } = req.query;
@@ -25,6 +26,7 @@ export const getListings = async (req: Request, res: Response) => {
   const listings = await Listing.find({
     status: ListingStatus.ACTIVE,
     locked: false,
+    featured: false,
   }).populate(IMAGES);
   const totalListings = listings.length;
   const paginatedListings = listings.slice(startIndex, endIndex);
