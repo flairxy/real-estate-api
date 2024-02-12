@@ -26,8 +26,10 @@ dotenv.config();
 const app = express();
 app.use(morganMiddleware);
 app.set('trust proxy', true); //for nginx
-app.use(json({ limit: '30mb' }));
-app.use(urlencoded({ limit: '30mb' }));
+// app.use(json({ limit: '30mb' }));
+// app.use(urlencoded({ limit: '30mb' }));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
 app.use(
   cookieSession({
     signed: false,

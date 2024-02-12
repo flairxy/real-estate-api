@@ -25,8 +25,10 @@ import { homeRouter } from '../src/routes/user/listing-route';
 dotenv.config();
 const app = express();
 app.use(morganMiddleware);
-app.use(json({ limit: '30mb' }));
-app.use(urlencoded({ limit: '30mb' }));
+// app.use(json({ limit: '30mb' }));
+// app.use(urlencoded({ limit: '30mb' }));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
 app.use(cors());
 
 app.use('/.netlify/functions/api', authRouter);
