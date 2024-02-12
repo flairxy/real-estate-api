@@ -3,7 +3,7 @@ import 'express-async-errors';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import serverless from 'serverless-http';
-import { json } from 'body-parser';
+import { json, urlencoded } from 'body-parser';
 import mongoose from 'mongoose';
 
 import { errorHandler } from '../src/middlewares/error-handler';
@@ -26,6 +26,7 @@ dotenv.config();
 const app = express();
 app.use(morganMiddleware);
 app.use(json({ limit: '30mb' }));
+app.use(urlencoded({ limit: '30mb' }));
 app.use(cors());
 
 app.use('/.netlify/functions/api', authRouter);

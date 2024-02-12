@@ -1,6 +1,6 @@
 import express from 'express';
 import 'express-async-errors';
-import { json } from 'body-parser';
+import { json, urlencoded } from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieSession from 'cookie-session';
@@ -27,6 +27,7 @@ const app = express();
 app.use(morganMiddleware);
 app.set('trust proxy', true); //for nginx
 app.use(json({ limit: '30mb' }));
+app.use(urlencoded({ limit: '30mb' }));
 app.use(
   cookieSession({
     signed: false,
