@@ -24,15 +24,7 @@ import { homeRouter } from '../src/routes/user/listing-route';
 
 dotenv.config();
 const app = express();
-app.use(json({ limit: '35mb' }));
-
-app.use(
-  urlencoded({
-    extended: true,
-    limit: '35mb',
-    parameterLimit: 50000,
-  })
-);
+app.use(express.json({limit: '50mb'}));
 app.use(morganMiddleware);
 // app.use(json({ limit: '30mb' }));
 // app.use(urlencoded({ limit: '30mb' }));
