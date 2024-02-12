@@ -15,6 +15,7 @@ import { authRouter } from '../src/routes/auth-route';
 import { userTransactionRouter } from '../src/routes/user/transaction-route';
 import { userAppointmentRouter } from '../src/routes/user/appointment-route';
 
+import { adminContractorRouter } from '../src/routes/admin/contractor-route';
 import { adminUserRouter } from '../src/routes/admin/user-route';
 import { adminListRouter } from '../src/routes/admin/listing-route';
 import { adminTransactionRouter } from '../src/routes/admin/transaction-route';
@@ -34,6 +35,7 @@ app.use('/.netlify/functions/api', adminListRouter);
 app.use('/.netlify/functions/api', adminUserRouter);
 app.use('/.netlify/functions/api', adminAppointmentRouter);
 app.use('/.netlify/functions/api', adminTransactionRouter);
+app.use('/.netlify/functions/api', adminContractorRouter);
 app.use('/.netlify/functions/api', homeRouter);
 
 app.all('*', async () => {

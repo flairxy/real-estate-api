@@ -59,6 +59,7 @@ export const create = async (req: Request, res: Response) => {
     coordinate,
     code,
     currency,
+    contractor
   } = req.body;
   const listing = Listing.generate({
     currency,
@@ -76,6 +77,7 @@ export const create = async (req: Request, res: Response) => {
     accessories,
     coordinate,
     code,
+    contractor
   });
   await listing.save();
   res.status(201).send(listing);
@@ -106,6 +108,7 @@ export const update = async (req: Request, res: Response) => {
     coordinate,
     code,
     currency,
+    contractor
   } = req.body;
   const { id } = req.params;
   const listing = await Listing.findOneAndUpdate(
@@ -126,6 +129,7 @@ export const update = async (req: Request, res: Response) => {
       coordinate,
       code,
       currency,
+      contractor
     },
     {
       new: true,

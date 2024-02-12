@@ -22,6 +22,7 @@ export interface Properties {
   title: string;
   description: string;
   images?: mongoose.Schema.Types.ObjectId[];
+  contractor?: mongoose.Schema.Types.ObjectId;
   type: number;
   category: string;
   code: string;
@@ -51,6 +52,7 @@ interface ListingDoc extends mongoose.Document {
   title: string;
   description: string;
   images: mongoose.Schema.Types.ObjectId[];
+  contractor?: mongoose.Schema.Types.ObjectId;
   type: number;
   category: string;
   address: string;
@@ -117,6 +119,11 @@ const listingSchema = new mongoose.Schema<ListingDoc>(
     },
     accessories: {
       type: mongoose.Schema.Types.Mixed,
+    },
+    contractor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'contractor',
+      required: false
     },
     coordinate: {
       type: mongoose.Schema.Types.Mixed,

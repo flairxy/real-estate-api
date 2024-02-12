@@ -17,6 +17,7 @@ import { userAppointmentRouter } from './routes/user/appointment-route';
 import { homeRouter } from './routes/user/listing-route';
 
 import { adminUserRouter } from './routes/admin/user-route';
+import { adminContractorRouter } from './routes/admin/contractor-route';
 import { adminListRouter } from './routes/admin/listing-route';
 import { adminTransactionRouter } from './routes/admin/transaction-route';
 import { adminAppointmentRouter } from './routes/admin/appointment-route';
@@ -40,6 +41,7 @@ app.use('/api', userAppointmentRouter);
 app.use('/api', adminListRouter);
 app.use('/api', adminUserRouter);
 app.use('/api', adminAppointmentRouter);
+app.use('/api', adminContractorRouter);
 app.use('/api', adminTransactionRouter);
 app.use('/api', homeRouter);
 

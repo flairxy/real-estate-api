@@ -4,6 +4,7 @@ import { ListingStatus, TransactionStatus } from '../utils/constants';
 import { Transaction } from '../models/transaction';
 import { BadRequestError } from '../errors/bad-request-error';
 import { PaystackService } from '../services';
+import { Contractor } from '../models/contractor';
 const IMAGES = 'images';
 
 export const getFeaturedListing = async (req: Request, res: Response) => {
@@ -14,6 +15,11 @@ export const getFeaturedListing = async (req: Request, res: Response) => {
   }).populate(IMAGES);
   // const sListings = listings.slice(0, 6);
   res.send(listings);
+};
+
+export const getContractors = async (req: Request, res: Response) => {
+  const contractors = await Contractor.find({});
+  res.send(contractors);
 };
 
 
