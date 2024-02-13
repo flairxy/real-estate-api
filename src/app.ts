@@ -25,12 +25,12 @@ import { adminAppointmentRouter } from './routes/admin/appointment-route';
 dotenv.config();
 const app = express();
 
-app.use(json({ limit: '35mb' }));
+app.use(json({ limit: '200mb' }));
 
 app.use(
   urlencoded({
     extended: true,
-    limit: '35mb',
+    limit: '200mb',
     parameterLimit: 50000,
   })
 );
