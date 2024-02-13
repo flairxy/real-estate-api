@@ -24,12 +24,12 @@ import { homeRouter } from '../src/routes/user/listing-route';
 
 dotenv.config();
 const app = express();
-app.use(json({ limit: '200mb' }));
+app.use(json({ limit: '50mb' }));
 
 app.use(
   urlencoded({
     extended: true,
-    limit: '200mb',
+    limit: '50mb',
     parameterLimit: 50000,
   })
 );

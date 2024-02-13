@@ -25,17 +25,18 @@ import { adminAppointmentRouter } from './routes/admin/appointment-route';
 dotenv.config();
 const app = express();
 
-app.use(json({ limit: '200mb' }));
+app.use(json({ limit: '50mb' }));
 
 app.use(
   urlencoded({
     extended: true,
-    limit: '200mb',
+    limit: '50mb',
     parameterLimit: 50000,
   })
 );
+app.use(express.json());
 app.use(morganMiddleware);
-app.set('trust proxy', true); //for nginx
+// app.set('trust proxy', true); //for nginx
 // app.use(json({ limit: '30mb' }));
 // app.use(urlencoded({ limit: '30mb' }));
 
