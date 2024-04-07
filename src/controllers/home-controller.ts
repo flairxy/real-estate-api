@@ -4,7 +4,9 @@ import { ListingStatus, TransactionStatus } from '../utils/constants';
 import { Transaction } from '../models/transaction';
 import { BadRequestError } from '../errors/bad-request-error';
 import { PaystackService } from '../services';
+import { Blog } from '../models/blog';
 const IMAGES = 'images';
+const COVER_IMAGE = 'cover_image';
 
 export const getFeaturedListing = async (req: Request, res: Response) => {
   const listings = await Listing.find({
@@ -65,4 +67,27 @@ export const verify = async (req: Request, res: Response) => {
   } else {
     throw new BadRequestError(response.data.gateway_response);
   }
+};
+
+export const getBlogs = async (req: Request, res: Response) => {
+  const { page } = req.query;
+  const p = page as any as number;
+  const pageSize = 9;
+  let startIndex = (p - 1) * pageSize;
+  let endIndex = p * pageSize;
+  const blogs = await Blog.find({}).populate(COVER_IMAGE);
+  const totalBlogs = blogs.length;
+  const paginatedBlogs = blogs.slice(startIndex, endIndex);
+  const totalPage = Math.ceil(blogs.length / pageSize);
+  res.send({
+    properties: paginatedBlogs,
+    totalPage,
+    totalBlogs,
+  });
+};
+
+export const getBlog = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const blog = await Blog.findById(id).populate(COVER_IMAGE);
+  res.send(blog);
 };

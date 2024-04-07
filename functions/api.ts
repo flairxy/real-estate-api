@@ -17,6 +17,7 @@ import { userAppointmentRouter } from '../src/routes/user/appointment-route';
 
 import { adminUserRouter } from '../src/routes/admin/user-route';
 import { adminListRouter } from '../src/routes/admin/listing-route';
+import { adminBlogRouter } from '../src/routes/admin/blog-route';
 import { adminTransactionRouter } from '../src/routes/admin/transaction-route';
 import { adminAppointmentRouter } from '../src/routes/admin/appointment-route';
 import { homeRouter } from '../src/routes/user/listing-route';
@@ -31,6 +32,7 @@ app.use('/.netlify/functions/api', authRouter);
 app.use('/.netlify/functions/api', userTransactionRouter);
 app.use('/.netlify/functions/api', userAppointmentRouter);
 app.use('/.netlify/functions/api', adminListRouter);
+app.use('/.netlify/functions/api', adminBlogRouter);
 app.use('/.netlify/functions/api', adminUserRouter);
 app.use('/.netlify/functions/api', adminAppointmentRouter);
 app.use('/.netlify/functions/api', adminTransactionRouter);
