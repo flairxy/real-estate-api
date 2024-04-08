@@ -208,6 +208,7 @@ export const deleteResource = async (req: Request, res: Response) => {
   if (upload) {
     await ImageService.deleteImage(public_id);
     await Upload.deleteOne({ _id: upload._id });
+    res.status(201).send({message: 'successfully deleted resource'});
   }
   res.status(201).send({});
 };

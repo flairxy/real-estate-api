@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { Listing } from '../models/listing';
-import { ListingStatus, TransactionStatus } from '../utils/constants';
+import {
+  BlogStatus,
+  ListingStatus,
+  TransactionStatus,
+} from '../utils/constants';
 import { Transaction } from '../models/transaction';
 import { BadRequestError } from '../errors/bad-request-error';
 import { PaystackService } from '../services';
@@ -70,17 +74,56 @@ export const verify = async (req: Request, res: Response) => {
 };
 
 export const getBlogs = async (req: Request, res: Response) => {
-  const { page } = req.query;
+  const { page, keyword } = req.query;
   const p = page as any as number;
-  const pageSize = 9;
+  const word = keyword as any as string;
+  const pageSize = 10;
   let startIndex = (p - 1) * pageSize;
   let endIndex = p * pageSize;
-  const blogs = await Blog.find({}).populate(COVER_IMAGE);
+  let blogs = await Blog.find({
+    status: BlogStatus.PUBLISHED,
+  }).populate(COVER_IMAGE);
+  if (word && word !== undefined) {
+    blogs = blogs.filter((blog) => {
+      const ws = word.split(' ');
+      if (ws.length > 1) {
+        let results = [];
+        for (let i = 0; i < ws.length; i++) {
+          let r =
+            blog.title
+              .toLowerCase()
+              .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+              .split(/\s+/)
+              .includes(ws[i].toLowerCase()) ||
+            blog.body
+              .toLowerCase()
+              .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+              .split(/\s+/)
+              .includes(ws[i].toLowerCase());
+          results.push(r);
+        }
+        return results;
+      } else {
+        return (
+          blog.title
+            .toLowerCase()
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+            .split(/\s+/)
+            .includes(word.toLowerCase()) ||
+          blog.body
+            .toLowerCase()
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+            .split(/\s+/)
+            .includes(word.toLowerCase())
+        );
+      }
+    });
+  }
   const totalBlogs = blogs.length;
   const paginatedBlogs = blogs.slice(startIndex, endIndex);
   const totalPage = Math.ceil(blogs.length / pageSize);
   res.send({
-    properties: paginatedBlogs,
+    posts: paginatedBlogs,
     totalPage,
     totalBlogs,
   });
@@ -90,4 +133,11 @@ export const getBlog = async (req: Request, res: Response) => {
   const { id } = req.params;
   const blog = await Blog.findById(id).populate(COVER_IMAGE);
   res.send(blog);
+};
+
+export const getLatestBlogs = async (req: Request, res: Response) => {
+  const blogs = (
+    await Blog.find({ status: BlogStatus.PUBLISHED }).populate(COVER_IMAGE)
+  ).reverse();
+  res.send(blogs);
 };

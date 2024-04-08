@@ -18,3 +18,8 @@ export enum ListingStatus {
   ACTIVE,
   SOLD,
 }
+
+export enum BlogStatus {
+  PENDING,
+  PUBLISHED
+}

@@ -1,5 +1,5 @@
 import express from 'express';
-import { getFeaturedListing, getListing, getListings, getBlogs, getBlog } from '../../controllers/home-controller';
+import { getFeaturedListing, getListing, getListings, getBlogs, getBlog, getLatestBlogs } from '../../controllers/home-controller';
 
 const router = express.Router();
 
@@ -9,5 +9,6 @@ router.get('/listings', getListings);
 
 router.get('/blog/:id', getBlog);
 router.get('/blogs', getBlogs);
+router.get('/blogs/latest', getLatestBlogs);
 
 export { router as homeRouter };

@@ -20,6 +20,7 @@ import { adminListRouter } from '../src/routes/admin/listing-route';
 import { adminBlogRouter } from '../src/routes/admin/blog-route';
 import { adminTransactionRouter } from '../src/routes/admin/transaction-route';
 import { adminAppointmentRouter } from '../src/routes/admin/appointment-route';
+import { adminTagRouter } from '../src/routes/admin/tag-route';
 import { homeRouter } from '../src/routes/user/listing-route';
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.use('/.netlify/functions/api', adminBlogRouter);
 app.use('/.netlify/functions/api', adminUserRouter);
 app.use('/.netlify/functions/api', adminAppointmentRouter);
 app.use('/.netlify/functions/api', adminTransactionRouter);
+app.use('/.netlify/functions/api', adminTagRouter);
 app.use('/.netlify/functions/api', homeRouter);
 
 app.all('*', async () => {

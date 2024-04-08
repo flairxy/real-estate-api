@@ -20,6 +20,8 @@ import { adminUserRouter } from './routes/admin/user-route';
 import { adminListRouter } from './routes/admin/listing-route';
 import { adminTransactionRouter } from './routes/admin/transaction-route';
 import { adminAppointmentRouter } from './routes/admin/appointment-route';
+import { adminBlogRouter } from './routes/admin/blog-route';
+import { adminTagRouter } from './routes/admin/tag-route';
 
 dotenv.config();
 const app = express();
@@ -39,8 +41,10 @@ app.use('/api', userTransactionRouter);
 app.use('/api', userAppointmentRouter);
 app.use('/api', adminListRouter);
 app.use('/api', adminUserRouter);
+app.use('/api', adminBlogRouter);
 app.use('/api', adminAppointmentRouter);
 app.use('/api', adminTransactionRouter);
+app.use('/api', adminTagRouter);
 app.use('/api', homeRouter);
 
 app.all('*', async () => {

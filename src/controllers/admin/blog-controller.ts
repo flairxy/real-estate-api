@@ -33,23 +33,27 @@ export const find = async (req: Request, res: Response) => {
 };
 
 export const create = async (req: Request, res: Response) => {
-  const { title, body } = req.body;
+  const { title, body, status, tag } = req.body;
   const blog = Blog.generate({
     title,
     body,
+    status,
+    tag,
   });
   await blog.save();
   res.status(201).send(blog);
 };
 
 export const update = async (req: Request, res: Response) => {
-  const { title, body } = req.body;
+  const { title, body, status, tag } = req.body;
   const { id } = req.params;
   const blog = await Blog.findOneAndUpdate(
     { _id: id },
     {
       title,
       body,
+      status,
+      tag
     },
     {
       new: true,
@@ -64,10 +68,11 @@ export const deleteBlog = async (req: Request, res: Response) => {
     const uploadId = blog.cover_image;
     let publicId: string = '';
     const upload = await Upload.findById(uploadId);
-    if (upload) publicId = upload.public_id;
+    if (upload) {
+      publicId = upload.public_id;
       await ImageService.deleteUploads([publicId], id, TYPE);
       await Upload.deleteOne({ _id: uploadId });
-    
+    }
     await Blog.deleteOne({ _id: id });
   }
   res.status(201).send({});
